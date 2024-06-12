@@ -13,10 +13,55 @@ class album
 
     private string $url;
 
-    private string $afbeelding;
+    private ?string $afbeelding;
 
     private string $prijs;
 
+    /**
+     * @param int|null $id
+     * @param string $naam
+     * @param string $artiest
+     * @param string $release_datum
+     * @param string $url
+     * @param string $afbeelding
+     * @param string $prijs
+     */
+    public function __construct(?int $id, string $naam, string $artiest, string $release_datum, string $url, ?string $afbeelding, string $prijs)
+    {
+        $this->id = $id;
+        $this->naam = $naam;
+        $this->artiest = $artiest;
+        $this->release_datum = $release_datum;
+        $this->url = $url;
+        $this->afbeelding = $afbeelding;
+        $this->prijs = $prijs;
+    }
+
+    public static function getAll(PDO $db): array
+    {
+        // Voorbereiden van de query
+        $stmt = $db->query("SELECT * FROM album");
+
+        // Array om personen op te slaan
+        $albums = [];
+
+        // Itereren over de resultaten en personen toevoegen aan de array
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $album = new Album(
+                $row['ID'],
+                $row['Naam'],
+                $row['Artiesten'],
+                $row['Release_datum'],
+                $row['URL'],
+                $row['Afbeelding'],
+                $row['Prijs']
+            );
+            $albums[] = $album;
+        }
+
+        // Retourneer array met personen
+        return $albums;
+    }
     /**
      * @return int|null
      */
@@ -100,7 +145,7 @@ class album
     /**
      * @return string
      */
-    public function getAfbeelding(): string
+    public function getAfbeelding(): ?string
     {
         return $this->afbeelding;
     }
